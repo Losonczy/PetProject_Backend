@@ -18,6 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static com.codecool.rent_manager.model.Role.ADMIN;
+import static com.codecool.rent_manager.model.Role.USER;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -54,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
-                .antMatchers("/auth/signup").hasRole(USER.name())
+                .antMatchers("/auth/signup").hasRole(ADMIN.name())
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

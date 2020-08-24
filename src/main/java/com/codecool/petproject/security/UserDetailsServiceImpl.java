@@ -1,9 +1,10 @@
 package com.codecool.petproject.security;
 
-import com.codecool.petproject.modell.User;
-import com.codecool.petproject.repository.UserRepository;
+import com.codecool.petproject.modell.AppUser;
+import com.codecool.petproject.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,12 +18,12 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 
-    private final UserRepository UserRepository;
+    private final AppUserRepository AppUserRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = UserRepository
+        AppUser user = AppUserRepository
                 .findByUserName(username);
         if(user == null){
             throw new UsernameNotFoundException("User not found: " + username);
