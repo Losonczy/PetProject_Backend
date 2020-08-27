@@ -32,6 +32,6 @@ public class AppUser {
 
     @Column(name="role")
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private String roles;
 
 }

@@ -18,8 +18,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-import static com.codecool.rent_manager.model.Role.ADMIN;
-import static com.codecool.rent_manager.model.Role.USER;
+
+
+import static com.codecool.petproject.modell.Role.ADMIN;
+import static com.codecool.petproject.modell.Role.USER;
 
 @Configuration
 @RequiredArgsConstructor

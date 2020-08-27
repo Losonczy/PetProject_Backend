@@ -1,5 +1,6 @@
 package com.codecool.petproject.modell;
 
-public enum Role {
+
+public enum Role{
     ADMIN,USER
 }
