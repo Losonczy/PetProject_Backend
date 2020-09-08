@@ -1,9 +1,6 @@
 package com.codecool.petproject.modell;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -30,8 +27,11 @@ public class AppUser {
     @Column(name="email")
     private String email;
 
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Singular
     @Column(name="role")
     @Enumerated(EnumType.STRING)
-    private String roles;
+    private Set<Role> roles;
 
 }

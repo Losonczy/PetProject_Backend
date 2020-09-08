@@ -2,10 +2,13 @@ package com.codecool.petproject.service;
 
 import com.codecool.petproject.modell.AppUser;
 import com.codecool.petproject.modell.Role;
+import com.codecool.petproject.modell.UserCredentials;
 import com.codecool.petproject.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 
 @Service
@@ -21,8 +24,11 @@ public class UserService {
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
                         .email(email)
-                        .role.(Role.USER)
+                        .roles(Collections.singleton(Role.USER))
                         .build()
         );
+    }
+    public AppUser register (UserCredentials userCredentials) {
+        return register(userCredentials.getUsername(), userCredentials.getPassword());
     }
 }
