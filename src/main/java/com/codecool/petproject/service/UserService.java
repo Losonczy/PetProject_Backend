@@ -18,17 +18,26 @@ public class UserService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder encoder;
 
-    public AppUser register(String username, String password, String email) {
+    public AppUser register(String username, String password,Role roles, String email) {
         return appUserRepository.save(
                 AppUser.builder()
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
                         .email(email)
-                        .roles(Collections.singleton(Role.USER))
+                        .roles(Collections.singleton(roles))
                         .build()
         );
     }
-    public AppUser register (UserCredentials userCredentials) {
-        return register(userCredentials.getUsername(), userCredentials.getPassword());
+
+    public AppUser registerr(String username, String password){
+        return appUserRepository.save(
+                AppUser.builder()
+                        .userName(username)
+                        .hashedPassword(encoder.encode(password))
+                        .build()
+        );
     }
+//    public AppUser register (UserCredentials userCredentials) {
+//        return registerr(userCredentials.getUsername(), userCredentials.getPassword());
+//    }
 }

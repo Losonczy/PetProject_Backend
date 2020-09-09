@@ -30,13 +30,11 @@ public class AuthController {
     @Autowired
     AppUserRepository  appUserRepository;
 
-    @PostMapping("/login")
-    public ResponseEntity<AppUser> login (@RequestBody UserCredentials appUser, HttpServletResponse response){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-             appUser.getEmail(),
-             appUser
-        ))
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<AppUser> login (@RequestBody UserCredentials appUser, HttpServletResponse response){
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+//        ));
+//    }
 
 
 }
