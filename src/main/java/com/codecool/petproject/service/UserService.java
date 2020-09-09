@@ -1,8 +1,9 @@
 package com.codecool.petproject.service;
 
+
+import com.codecool.petproject.modell.UserCredentials;
 import com.codecool.petproject.modell.AppUser;
 import com.codecool.petproject.modell.Role;
-import com.codecool.petproject.modell.UserCredentials;
 import com.codecool.petproject.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,26 +19,27 @@ public class UserService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder encoder;
 
-    public AppUser register(String username, String password,Role roles, String email) {
+    public AppUser register (String username, String password, Role role) {
         return appUserRepository.save(
                 AppUser.builder()
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
-                        .email(email)
-                        .roles(Collections.singleton(roles))
+                        .roles(Collections.singleton(role))
                         .build()
         );
     }
 
-    public AppUser registerr(String username, String password){
+    public AppUser registerr(String username, String password) {
         return appUserRepository.save(
                 AppUser.builder()
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
+                        .roles(Collections.singleton(Role.USER))
                         .build()
         );
     }
-//    public AppUser register (UserCredentials userCredentials) {
-//        return registerr(userCredentials.getUsername(), userCredentials.getPassword());
-//    }
+
+    public AppUser register (UserCredentials userCredentials) {
+        return registerr(userCredentials.getUsername(), userCredentials.getPassword());
+    }
 }
