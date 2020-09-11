@@ -9,6 +9,7 @@ public class SignupCredentials {
 
     String username;
     String password;
+    String email;
     Role role;
 
 

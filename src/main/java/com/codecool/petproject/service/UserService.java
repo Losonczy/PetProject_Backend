@@ -19,12 +19,13 @@ public class UserService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder encoder;
 
-    public AppUser register (String username, String password, Role role) {
+    public AppUser register (String username, String password, Role role, String email) {
         return appUserRepository.save(
                 AppUser.builder()
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
                         .roles(Collections.singleton(role))
+                        .email(email)
                         .build()
         );
     }

@@ -15,13 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     @Autowired
-    AppUserRepository  appUserRepository;
+    AppUserRepository appUserRepository;
 
 
     private void addTokenToCookie(HttpServletResponse response, String token) {
@@ -49,26 +51,61 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AppUser> login(@RequestBody UserCredentials appUser,HttpServletResponse response){
+    public ResponseEntity<AppUser> login(@RequestBody UserCredentials appUser, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 appUser.getEmail(),
                 appUser.getPassword()
         ));
         String jwtToken = jwtUtil.generateToken(authentication);
         addTokenToCookie(response, jwtToken);
-        AppUser userInDb  = appUserRepository.findByEmail(appUser.getEmail());
-        return  ResponseEntity.ok().body(userInDb);
+        AppUser userInDb = appUserRepository.findByEmail(appUser.getEmail());
+        return ResponseEntity.ok().body(userInDb);
 
     }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupCredentials credentials) {
-        userService.register(credentials.getUsername(),credentials.getPassword(),credentials.getRole());
+        userService.register(credentials.getUsername(), credentials.getPassword(), credentials.getRole(), credentials.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(credentials.getUsername());
     }
 
+    @PostMapping("/logout")
+    public void logout(HttpServletResponse response, HttpServletRequest request) {
+        Optional<Cookie> jwtToken =
+                Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{}))
+                        .filter(cookie -> cookie.getName().equals("token"))
+                        .findFirst();
+        ResponseCookie cookie = ResponseCookie.from("token", jwtToken.toString())
+                .domain("localhost")
+                .sameSite("Strict")
+                .maxAge(0)
+                .httpOnly(true)
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
 
+    @GetMapping("/me")
+    public Boolean currentUser(HttpServletRequest request) {
+        Optional<Cookie> jwtToken =
+                Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{}))
+                        .filter(cookie -> cookie.getName().equals("token"))
+                        .findFirst();
+        if (jwtToken.isPresent()) {
+            UsernamePasswordAuthenticationToken userToken = jwtUtil.validateTokenAndExtractUserSpringToken(jwtToken.get().getValue());
+            SecurityContextHolder.getContext().setAuthentication(userToken);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            return authentication.isAuthenticated();
+        }
+        return false;
+    }
 
+    @GetMapping("/getUser")
+    public AppUser getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser userInDb = appUserRepository.findByUserName(authentication.getPrincipal().toString());
+        return userInDb;
+    }
 
 
 }
