@@ -24,7 +24,7 @@ public class UserService {
                 AppUser.builder()
                         .userName(username)
                         .hashedPassword(encoder.encode(password))
-                        .roles(Collections.singleton(role))
+                        .roles(Collections.singleton(Role.USER))
                         .email(email)
                         .build()
         );

@@ -53,7 +53,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AppUser> login(@RequestBody UserCredentials appUser, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                appUser.getEmail(),
+                appUser.getUsername(),
                 appUser.getPassword()
         ));
         String jwtToken = jwtUtil.generateToken(authentication);
@@ -67,6 +67,7 @@ public class AuthController {
     public ResponseEntity<String> signup(@RequestBody SignupCredentials credentials) {
         userService.register(credentials.getUsername(), credentials.getPassword(), credentials.getRole(), credentials.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(credentials.getUsername());
+
     }
 
     @PostMapping("/logout")
@@ -103,6 +104,9 @@ public class AuthController {
     @GetMapping("/getUser")
     public AppUser getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String jwtToken = jwtUtil.generateToken(authentication);
+
+        System.out.println(jwtToken);
         AppUser userInDb = appUserRepository.findByUserName(authentication.getPrincipal().toString());
         return userInDb;
     }
